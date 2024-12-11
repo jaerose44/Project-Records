@@ -1,8 +1,45 @@
-name: hello-world
+name: Project Records
 "on": push
 jobs:
   my-job:
     runs-on: ubuntu-latest
     steps:
       - name: my-step
-        run: echo "Hello World!"
+        run: echo "Project Records"
+git add .
+git commit -m "Initial project structure setup"
+git remote add origin https://github.com/jaerose44/Project-Records
+git push -u origin master
+gpg --gen-key
+gpg -e -r your-email@example.com sensitive_document.txt
+git add sensitive_document.txt.gpg
+git commit -m "Add encrypted sensitive document"
+git push origin master
+gpg -d sensitive_document.txt.gpg > sensitive_document.txt
+name: Document Notification
+
+on:
+  push:
+    paths:
+      - '**/*.txt'  # Trigger when any .txt file (or document) is pushed
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Send Slack Notification
+      uses: slackapi/slack-github-action@v1.16.0
+      with:
+        slack-message: "A new document has been added or updated in the project repository."
+        slack-channel: "#project-team"  # Change to your Slack channel
+        slack-token: ${{ secrets.SLACK_TOKEN }}
+gh issue create --title "Review sensitive document for compliance" --body "Please review the attached sensitive document for compliance before submission."
+git checkout -b document-review
+git add Planning/sensitive_plan.txt
+git commit -m "Updated sensitive project plan"
+git push origin document-review
+gh pr create --base master --head document-review --title "Document Review" --body "Review updated project plan."
